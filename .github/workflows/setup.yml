@@ -1,0 +1,28 @@
+name: Generar Gradle Wrapper Automáticamente
+on: workflow_dispatch # Esto permite ejecutarlo manualmente
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Permiso para que la acción pueda subir archivos
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Generar Wrapper
+        run: gradle wrapper
+        
+      - name: Subir archivos al repositorio
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add gradlew gradlew.bat gradle/
+          git commit -m "Añadido Gradle Wrapper automáticamente"
+          git push
+          
